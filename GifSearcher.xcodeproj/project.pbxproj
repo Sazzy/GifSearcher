@@ -101,6 +101,7 @@
 				7BE1D0071EAA3A63004DA9D4 /* Resources */,
 				80DB286CB16E7FEC933FB21A /* [CP] Embed Pods Frameworks */,
 				2917581995172D002C5A56DE /* [CP] Copy Pods Resources */,
+				7BE1D01E1EAA41EC004DA9D4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -173,6 +174,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GifSearcher/Pods-GifSearcher-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		7BE1D01E1EAA41EC004DA9D4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PODS_ROOT}/SwiftLint/swiftlint";
 		};
 		80DB286CB16E7FEC933FB21A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -376,6 +390,7 @@
 				7BE1D01D1EAA3A63004DA9D4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

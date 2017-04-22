@@ -1,18 +1,28 @@
 PODS:
   - Alamofire (4.4.0)
+  - RxCocoa (3.4.0):
+    - RxSwift (~> 3.4)
+  - RxSwift (3.4.0)
   - SwiftGifOrigin (1.6.1)
+  - SwiftLint (0.18.1)
   - SwiftyJSON (3.1.4)
 
 DEPENDENCIES:
   - Alamofire (~> 4.4)
+  - RxCocoa (~> 3.0)
+  - RxSwift (~> 3.0)
   - SwiftGifOrigin (~> 1.6.1)
+  - SwiftLint
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  RxCocoa: d14ef6b6029e1ddc6e966508c09289090de68ff9
+  RxSwift: 3789a1af753002a14edecdb698a2424624296a9c
   SwiftGifOrigin: d6679d3ebe9df2e049a84bc52582635107b581f6
+  SwiftLint: b467d08f5b25dc3b3cfed243d8e1b74b91714c67
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: 7592440b385d0d0d24557054c608db289e857b55
+PODFILE CHECKSUM: c678b9efef3dfc2901ff18fa148bb2a2cde05c3d
 
 COCOAPODS: 1.2.1
