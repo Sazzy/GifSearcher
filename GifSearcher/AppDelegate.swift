@@ -1,11 +1,5 @@
 //
 //  AppDelegate.swift
-//  GifSearcher
-//
-//  Created by Eugene Sazonov on 21/04/2017.
-//  Copyright © 2017 Eugene Sazonov. All rights reserved.
-//
-
 import UIKit
 
 @UIApplicationMain
