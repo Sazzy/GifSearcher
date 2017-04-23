@@ -1,23 +1,22 @@
-//
-//  ViewController.swift
-//  GifSearcher
-//
-//  Created by Eugene Sazonov on 21/04/2017.
-//  Copyright © 2017 Eugene Sazonov. All rights reserved.
-//
-
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
 
+    @IBOutlet weak var searchTextField: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchTextField.delegate = self
+        searchTextField.returnKeyType = UIReturnKeyType.search
         // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
     }
 
 }
