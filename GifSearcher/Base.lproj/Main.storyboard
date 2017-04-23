@@ -41,14 +41,19 @@
                                         <rect key="frame" x="0.0" y="28" width="278" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7zN-xh-qO3" id="TuV-V9-dPD">
-                                            <rect key="frame" x="0.0" y="0.0" width="278" height="70"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="278" height="69"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GbD-u9-fAF">
-                                                    <rect key="frame" x="19" y="0.0" width="240" height="70"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GbD-u9-fAF">
+                                                    <rect key="frame" x="5" y="5" width="268" height="59"/>
                                                 </imageView>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="GbD-u9-fAF" secondAttribute="trailing" constant="5" id="CLv-CI-9dj"/>
+                                                <constraint firstItem="GbD-u9-fAF" firstAttribute="leading" secondItem="TuV-V9-dPD" secondAttribute="leading" constant="5" id="VFO-Ht-0iW"/>
+                                                <constraint firstAttribute="bottom" secondItem="GbD-u9-fAF" secondAttribute="bottom" constant="5" id="YMk-i3-Uos"/>
+                                                <constraint firstItem="GbD-u9-fAF" firstAttribute="top" secondItem="TuV-V9-dPD" secondAttribute="top" constant="5" id="s4I-14-nBm"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -70,6 +75,9 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="H2k-K6-v4j" secondAttribute="bottom" constant="5" id="v9S-Sa-kLn"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="searchTextField" destination="JOe-WT-F2F" id="qda-0C-CzX"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
