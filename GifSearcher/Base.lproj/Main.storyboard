@@ -62,6 +62,10 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="tBR-tS-cqJ"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="U6H-qu-tTc"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -76,6 +80,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="gifTableView" destination="H2k-K6-v4j" id="pc3-Xl-Yz4"/>
                         <outlet property="searchTextField" destination="JOe-WT-F2F" id="qda-0C-CzX"/>
                     </connections>
                 </viewController>

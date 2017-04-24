@@ -1,15 +1,17 @@
 import Foundation
+import Alamofire
+import SwiftyJSON
 
 class GetGifs {
     private let host = "http://api.giphy.com/"
     private let path = "v1/gifs/"
-    private var reqType: String = "trending?"
+    private var reqType = "trending?"
     private let apiKey = "api_key=dc6zaTOxFJmzC"
     private var urlReq = ""
     private var numOfResults = 25
-    
+    //
     init() {}
-    
+    //
     func makeRequest(req: String="trending?") -> String {
         if req == "trending?" {
             self.urlReq = self.host+self.path+req+self.apiKey
@@ -19,8 +21,20 @@ class GetGifs {
         }
         return urlReq
     }
-    
-    func getJson(url: String) {
+    //
+    func getJson(url: String) throws {
+        if Connectivity.isConnectedToInternet() {
+            Alamofire.request(url).validate().responseJSON { response in
+                if let temp = response.result.value {
+                    var jsonResult = JSON(temp)
+                    if jsonResult["pagination"]["count"] != 0 {
+                        
+                    }
+                }
+            }
+        } else {
+            throw GettingGifs.notConnectedToInternet
+        }
         
     }
     /*
