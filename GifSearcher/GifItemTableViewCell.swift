@@ -2,11 +2,11 @@ import UIKit
 
 class GifItemTableViewCell: UITableViewCell {
     @IBOutlet weak var gifItemImageView: UIImageView!
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-    //
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+    var suspendDownloading: (() -> ())?
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        gifItemImageView.image = nil
+        suspendDownloading?()
     }
 }

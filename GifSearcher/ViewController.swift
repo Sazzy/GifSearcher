@@ -7,36 +7,48 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
 
     @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var gifTableView: UITableView!
-    let test = GetData()
-    //
+    let manager = GifDownloadManager()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         searchTextField.delegate = self
-        gifTableView.estimatedRowHeight = 70.0
-        gifTableView.rowHeight = UITableViewAutomaticDimension
-        
-        ///////test
-        test.makeRequest()
-        test.getJSON { jsonRes, error in
-            self.test.getData(json: jsonRes) { _, _ in
-            }
+        manager.makeRequest() {
+            self.gifTableView.reloadData()
         }
+        //gifTableView.estimatedRowHeight = 70.0
+        //gifTableView.rowHeight = UITableViewAutomaticDimension
     }
-    //
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
-        //gifTableView.reloadData()
+        if let query = searchTextField.text {
+            manager.makeRequest(queryTerm: query) {
+                self.gifTableView.reloadData()
+            }
+        }
         return true
     }
-    //
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return manager.results.count
     }
-    //
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "gif", for: indexPath) as? GifItemTableViewCell
-        cell?.gifItemImageView.image = UIImage(data: self.test.gifArr[indexPath.row].gifData)
-        return cell!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "gif", for: indexPath)
+        guard let gifItemCell = cell as? GifItemTableViewCell else {
+            return cell
+        }
+        gifItemCell.suspendDownloading = { [weak self] in
+            self?.manager.stopDownloadGifData(index: indexPath.row)
+        }
+        manager.downloadGifData(index: indexPath.row, completionHandler: { gifItem, error in
+            if let data = gifItem.gifData {
+                DispatchQueue.main.async {
+                    gifItemCell.gifItemImageView.image = UIImage.gif(data: data)
+                }
+            }
+        })
+        return gifItemCell
     }
 
 }
