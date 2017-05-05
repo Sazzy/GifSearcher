@@ -43,7 +43,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return manager.results.count
+        return manager.requestResult.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -74,7 +74,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
     func handle(error: Error) {
         switch error {
         case GettingGifsError.noResultsFound:
-            self.show(message: "No results Found")
+            self.show(message: "No results found")
         case GettingGifsError.incorrectData:
             print("Incorrect Data")
         case GettingGifsError.notConnectedToInternet:

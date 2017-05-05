@@ -19,15 +19,6 @@ class GifDownloadManager {
         return URL(string: Constants.host + Constants.path + validatedQuery + Constants.apiKey)
     }
     public var requestResult = [(gif: GifItem, request: DataRequest?)]()
-    public var results = [GifItem]() {
-        didSet {
-            while requests.count < results.count {
-                requests.append(nil)
-            }
-        }
-    }
-
-    private var requests = [DataRequest?]()
     private var queryTerm: String?
 
     public func makeRequest(queryTerm: String, completion: @escaping (Error?) -> ()) {
@@ -61,7 +52,7 @@ class GifDownloadManager {
                         let widthString = original["width"].string,
                         let heightString = original["height"].string,
                         let width = Int(widthString), let height = Int(heightString) {
-                        self.results.append(GifItem(url: url, gifData: nil, width: width, height: height))
+                        self.requestResult.append((gif: GifItem(url: url, gifData: nil, width: width, height: height), request: nil))
                         completion(nil)
                     } else {
                         completion(GettingGifsError.incorrectData)
@@ -74,39 +65,43 @@ class GifDownloadManager {
     }
 
     public func stopDownloadGifData(index: Int) {
-        if requests.count != 0{
-            if let request = requests[index] {
+        if requestResult.count != 0 {
+            if let request = requestResult[index].request {
                 request.suspend()
-            } else {
+            }
+            else {
                 return
             }
         }
     }
 
     public func downloadGifData(index: Int, completionHandler: @escaping (GifItem, Error?) -> Void) {
-        if results[index].gifData != nil {
-            completionHandler(results[index], nil)
-        } else if let request = requests[index] {
+        if requestResult[index].gif.gifData != nil {
+            completionHandler(requestResult[index].gif, nil)
+        } else if let request = requestResult[index].request {
             if request.task?.state == .suspended {
                 request.resume()
             }
         } else {
-            let request = Alamofire.request(results[index].url)
-            requests[index] = request
+            let request = Alamofire.request(requestResult[index].gif.url)
+            requestResult[index].request = request
             request.validate().responseData { response in
-                // app is fell here
-                self.results[index].gifData = response.result.value
-                completionHandler(self.results[index], nil)
+                if let data = response.result.value {
+                    self.requestResult[index].gif.gifData = data
+                    completionHandler(self.requestResult[index].gif, nil)
+                } else {
+                    return
+                }
+                
             }
         }
     }
 
     private func clear() {
-        for request in requests {
+        for (_, request) in requestResult {
             request?.cancel()
         }
-        requests.removeAll()
-        results.removeAll()
+        requestResult.removeAll()
     }
     
     private func validateQuery(queryTerm: String?) -> String {
