@@ -1,7 +1,7 @@
 import Foundation
 
-enum GettingGifs: Error {
+enum GettingGifsError: Error {
     case notConnectedToInternet
-    case invalidRequest
     case noResultsFound
+    case incorrectData
 }

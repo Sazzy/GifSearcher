@@ -10,19 +10,15 @@ fileprivate struct Constants {
 
 class GifDownloadManager {
     private var requestURL: URL? {
-        var preparedQuery: String
-        if queryTerm != Constants.trendingKey &&
-            queryTerm.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-            preparedQuery = "search?q=" + queryTerm.replacingOccurrences(of: " ", with: "+") + "&"
-            if !results.isEmpty {
-                preparedQuery += "offset=\(results.count)"
-            }
+        var validatedQuery: String = validateQuery(queryTerm: queryTerm)
+        if validatedQuery != "" {
+            validatedQuery = "search?q=" + validatedQuery + "&"
         } else {
-            preparedQuery = Constants.trendingKey
+            validatedQuery = Constants.trendingKey
         }
-        return URL(string: Constants.host + Constants.path + preparedQuery + Constants.apiKey)
+        return URL(string: Constants.host + Constants.path + validatedQuery + Constants.apiKey)
     }
-
+    public var requestResult = [(gif: GifItem, request: DataRequest?)]()
     public var results = [GifItem]() {
         didSet {
             while requests.count < results.count {
@@ -32,29 +28,30 @@ class GifDownloadManager {
     }
 
     private var requests = [DataRequest?]()
-    private var queryTerm = Constants.trendingKey
+    private var queryTerm: String?
 
-    public func makeRequest(queryTerm: String = Constants.trendingKey, completion: @escaping () -> ()) {
+    public func makeRequest(queryTerm: String, completion: @escaping (Error?) -> ()) {
         clear()
         self.queryTerm = queryTerm
         updateResults(completion: completion)
     }
 
-    public func loadMore(completion: @escaping () -> ()) {
-
-    }
-
-    private func updateResults(completion: @escaping () -> ()) {
+    private func updateResults(completion: @escaping (Error?) -> ()) {
         guard let url = requestURL else {
+            return
+        }
+        if !Connectivity.isConnectedToInternet() {
+            completion(GettingGifsError.notConnectedToInternet)
             return
         }
         Alamofire.request(url).validate().responseJSON { response in
             switch response.result {
             case .success(let value):
                 let json = JSON(value)
+                if json["pagination"]["count"] == 0 {
+                    completion(GettingGifsError.noResultsFound)
+                }
                 guard let data = json["data"].array else {
-//                    completionHandler(nil, NSError(domain: "Incorrect data", code: 1, userInfo: nil))
-                    completion()
                     return
                 }
                 for element in data {
@@ -65,23 +62,24 @@ class GifDownloadManager {
                         let heightString = original["height"].string,
                         let width = Int(widthString), let height = Int(heightString) {
                         self.results.append(GifItem(url: url, gifData: nil, width: width, height: height))
+                        completion(nil)
                     } else {
-//                        completionHandler(nil, NSError(domain: "Incorrect data", code: 1, userInfo: nil))
-                        return
+                        completion(GettingGifsError.incorrectData)
                     }
                 }
-                completion()
-            case .failure(_):
-                completion()
-                break
-                //completionHandler(JSON.null, error)
+            case .failure(let error):
+                completion(error)
             }
         }
     }
 
     public func stopDownloadGifData(index: Int) {
-        if let request = requests[index] {
-            request.suspend()
+        if requests.count != 0{
+            if let request = requests[index] {
+                request.suspend()
+            } else {
+                return
+            }
         }
     }
 
@@ -96,6 +94,7 @@ class GifDownloadManager {
             let request = Alamofire.request(results[index].url)
             requests[index] = request
             request.validate().responseData { response in
+                // app is fell here
                 self.results[index].gifData = response.result.value
                 completionHandler(self.results[index], nil)
             }
@@ -103,7 +102,24 @@ class GifDownloadManager {
     }
 
     private func clear() {
+        for request in requests {
+            request?.cancel()
+        }
         requests.removeAll()
         results.removeAll()
+    }
+    
+    private func validateQuery(queryTerm: String?) -> String {
+        var validatedQuery = ""
+        let charSet = CharacterSet.punctuationCharacters.union(.newlines).union(.symbols)
+        if let query = queryTerm {
+            let stringArray = query.components(separatedBy: charSet)
+            validatedQuery = stringArray.joined()
+            validatedQuery = validatedQuery.trimmingCharacters(in: .whitespaces)
+            validatedQuery = validatedQuery.replacingOccurrences(of: " ", with: "+")
+            return validatedQuery
+        } else {
+            return ""
+        }
     }
 }
