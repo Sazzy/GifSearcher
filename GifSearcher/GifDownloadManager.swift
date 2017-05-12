@@ -112,9 +112,7 @@ class GifDownloadManager {
             validatedQuery = stringArray.joined()
             validatedQuery = validatedQuery.trimmingCharacters(in: .whitespaces)
             validatedQuery = validatedQuery.replacingOccurrences(of: " ", with: "+")
-            return validatedQuery
-        } else {
-            return ""
         }
+        return validatedQuery
     }
 }

@@ -65,6 +65,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         self.manager.stopDownloadGifData(index: indexPath.row)
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return CGFloat(manager.requestResult[indexPath.row].gif.height)
+    }
+    
     func show(message labelText: String) {
         gifTableView.isHidden = true
         resultLabel.text = labelText
@@ -75,12 +79,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         switch error {
         case GettingGifsError.noResultsFound:
             self.show(message: "No results found")
-        case GettingGifsError.incorrectData:
-            print("Incorrect Data")
         case GettingGifsError.notConnectedToInternet:
             self.show(message: "Not connected to internet")
         default:
-            print("default")
+            print(error)
         }
     }
 }
