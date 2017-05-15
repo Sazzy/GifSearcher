@@ -1,6 +1,4 @@
 import UIKit
-import RxSwift
-import RxCocoa
 import SwiftGifOrigin
 
 class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
@@ -13,9 +11,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         searchTextField.delegate = self
-        manager.makeRequest(queryTerm: "") { err in
-            if let error = err {
-                self.handle(error: error)
+        manager.makeRequest(queryTerm: "") { errString in
+            if let error = errString {
+                self.show(message: error)
             } else {
                 self.gifTableView.isHidden = false
             }
@@ -28,9 +26,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         if let query = searchTextField.text {
-            manager.makeRequest(queryTerm: query) { err in
-                if let error = err {
-                    self.handle(error: error)
+            manager.makeRequest(queryTerm: query) { errString in
+                if let error = errString {
+                    self.show(message: error)
                 } else {
                     self.gifTableView.isHidden = false
                 }
@@ -73,16 +71,5 @@ class ViewController: UIViewController, UITextFieldDelegate, UITableViewDataSour
         gifTableView.isHidden = true
         resultLabel.text = labelText
         resultLabel.isHidden = false
-    }
-    
-    func handle(error: Error) {
-        switch error {
-        case GettingGifsError.noResultsFound:
-            self.show(message: "No results found")
-        case GettingGifsError.notConnectedToInternet:
-            self.show(message: "Not connected to internet")
-        default:
-            print(error)
-        }
     }
 }

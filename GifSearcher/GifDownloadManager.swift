@@ -21,10 +21,16 @@ class GifDownloadManager {
     public var requestResult = [(gif: GifItem, request: DataRequest?)]()
     private var queryTerm: String?
 
-    public func makeRequest(queryTerm: String, completion: @escaping (Error?) -> ()) {
+    public func makeRequest(queryTerm: String, completionError: @escaping (String?) -> ()) {
         clear()
         self.queryTerm = queryTerm
-        updateResults(completion: completion)
+        updateResults(completion: { err in
+            if let error = err {
+                completionError(self.handle(error: error))
+            } else {
+                completionError(nil)
+            }
+        })
     }
 
     private func updateResults(completion: @escaping (Error?) -> ()) {
@@ -65,34 +71,35 @@ class GifDownloadManager {
     }
 
     public func stopDownloadGifData(index: Int) {
-        if requestResult.count != 0 {
+        if requestResult.count != 0 && index < requestResult.count{
             if let request = requestResult[index].request {
                 request.suspend()
-            }
-            else {
+            } else {
                 return
             }
         }
     }
 
     public func downloadGifData(index: Int, completionHandler: @escaping (GifItem, Error?) -> Void) {
-        if requestResult[index].gif.gifData != nil {
-            completionHandler(requestResult[index].gif, nil)
-        } else if let request = requestResult[index].request {
-            if request.task?.state == .suspended {
-                request.resume()
-            }
-        } else {
-            let request = Alamofire.request(requestResult[index].gif.url)
-            requestResult[index].request = request
-            request.validate().responseData { response in
-                if let data = response.result.value {
-                    self.requestResult[index].gif.gifData = data
-                    completionHandler(self.requestResult[index].gif, nil)
-                } else {
-                    return
+        if index < requestResult.count {
+            if requestResult[index].gif.gifData != nil {
+                completionHandler(requestResult[index].gif, nil)
+            } else if let request = requestResult[index].request {
+                if request.task?.state == .suspended {
+                    request.resume()
                 }
-                
+            } else {
+                let request = Alamofire.request(requestResult[index].gif.url)
+                requestResult[index].request = request
+                request.validate().responseData { response in
+                    if let data = response.result.value {
+                        self.requestResult[index].gif.gifData = data
+                        completionHandler(self.requestResult[index].gif, nil)
+                    } else {
+                        return
+                    }
+                    
+                }
             }
         }
     }
@@ -114,5 +121,18 @@ class GifDownloadManager {
             validatedQuery = validatedQuery.replacingOccurrences(of: " ", with: "+")
         }
         return validatedQuery
+    }
+    
+    private func handle(error: Error) -> String? {
+        var errString: String? = nil
+        switch error {
+        case GettingGifsError.noResultsFound:
+            errString = "No results found"
+        case GettingGifsError.notConnectedToInternet:
+            errString = "Not connected to internet"
+        default:
+            print(error)
+        }
+        return errString
     }
 }
